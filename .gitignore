@@ -1,0 +1,10 @@
+.lsp-session-*
+auto-save-list/
+custom.el
+elpa/
+games/
+org-roam.db
+projectile-bookmarks.eld
+savefile/
+transient/
+var/
