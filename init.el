@@ -191,6 +191,15 @@
   (require 'dired-x))
 
 ;;; third-party packages
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+  :config
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
+
 (use-package zenburn-theme
   :ensure t
   :config
