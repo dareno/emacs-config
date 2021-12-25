@@ -1,5 +1,9 @@
+;;; init.el --- Initialization file for Emacs
+;;; Commentary:
+;;; Emacs Startup File --- initialization for Emacs
 ;; inspired by https://github.com/bbatsov/emacs.d/blob/master/init.el
 
+;;; Code:
 ;; setup package manager
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -58,6 +62,7 @@
 
 ;; word wrap
 (global-visual-line-mode t)
+(diminish 'visual-line-mode)
 
 ;; mode line settings
 (column-number-mode t)
@@ -112,6 +117,7 @@
 
 (require 'use-package)
 (setq use-package-verbose t)
+(setq use-package-always-ensure t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -139,6 +145,7 @@
   (global-hl-line-mode +1))
 
 (use-package uniquify
+  :ensure f
   :config
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-separator "/")
@@ -175,6 +182,7 @@
   (recentf-mode +1))
 
 (use-package dired
+  :ensure f
   :config
   ;; dired - reuse current buffer by pressing 'a'
   (put 'dired-find-alternate-file 'disabled nil)
@@ -191,6 +199,10 @@
   (require 'dired-x))
 
 ;;; third-party packages
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+
 (use-package undo-tree
   :ensure t
   :diminish undo-tree-mode
@@ -273,6 +285,7 @@
 
 (use-package whitespace
   :init
+  (diminish 'whitespace-mode )
   (dolist (hook '(prog-mode-hook text-mode-hook))
     (add-hook hook #'whitespace-mode))
   (add-hook 'before-save-hook #'whitespace-cleanup)
@@ -465,7 +478,7 @@
   :ensure t
   :config
   (setq company-idle-delay 0.5)
-  (setq company-show-numbers t)
+  (setq company-show-quick-access t)
   (setq company-tooltip-limit 10)
   (setq company-minimum-prefix-length 2)
   (setq company-tooltip-align-annotations t)
@@ -570,6 +583,7 @@
   (setq org-treat-S-cursor-todo-selection-as-state-change nil))
 
 (use-package org-agenda
+  :ensure f
   :config
   (setq org-agenda-directory "~/Dropbox/org/")
   (setq org-agenda-files '("~/Dropbox/org/" "~/Dropbox/org/habit/"))
@@ -604,6 +618,7 @@
   (set 'org-agenda-custom-commands `(,dcreno/org-agenda-todo-view)))
 
 (use-package org-faces
+  :ensure f
   :config
   (setq org-todo-keyword-faces
         (quote (("TODO" :foreground "red" :weight bold)
