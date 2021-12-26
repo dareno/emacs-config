@@ -199,6 +199,16 @@
   (require 'dired-x))
 
 ;;; third-party packages
+
+;; Helpful is an alternative to the built-in Emacs help that provides
+;; much more contextual information.
+(use-package helpful
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key] . helpful-key)
+  )
+
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
@@ -256,7 +266,9 @@
   (setq sp-hybrid-kill-entire-symbol nil)
   (sp-use-paredit-bindings)
   (require 'smartparens-config)
-  :diminish smartparens-mode)
+  :diminish smartparens-mode
+  :hook ('prog-mode . smartparens-mode)
+  )
 
 (use-package exec-path-from-shell
   :ensure t
@@ -273,7 +285,7 @@
 (use-package rainbow-delimiters
   :ensure t
   :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  :hook ('prog-mode . rainbow-delimiters-mode))
 
 (set (make-local-variable 'whitespace-line-column) 80)
 (add-hook 'after-change-major-mode-hook
@@ -469,6 +481,37 @@
   :init
   (marginalia-mode))
 
+(use-package embark
+  :ensure t
+
+  :bind*
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :demand t ; only necessary if you have the hook below
+  ;; if you want to have consult previews as you move around an
+  ;; auto-updating embark collect buffer
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 (use-package ctrlf
   :ensure t
   :config
@@ -504,6 +547,7 @@
   (add-to-list 'super-save-triggers 'ace-window)
   (super-save-mode +1)
   (diminish 'super-save-mode))
+
 
 (use-package crux
   :ensure t
