@@ -62,7 +62,7 @@
 
 ;; word wrap
 (global-visual-line-mode t)
-(diminish 'visual-line-mode)
+
 
 ;; mode line settings
 (column-number-mode t)
@@ -86,9 +86,11 @@
 ;; delete the selection with a keypress
 (delete-selection-mode t)
 
-;; store all backup and autosave files in the tmp dir
+;; store all backup and autosave files in the tmp dir but omit tramp files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil)) ;; doesn't seem to work :(
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
@@ -213,6 +215,24 @@
   :ensure t
   :init (doom-modeline-mode 1))
 
+(use-package diminish
+  :ensure t
+  :config
+  (diminish 'abbrev-mode)
+  (diminish 'flyspell-mode)
+  (diminish 'flyspell-prog-mode)
+  (diminish 'eldoc-mode)
+  (diminish 'visual-line-mode))
+
+;; Enable Docker management and editing container files
+(use-package docker ;; questionable use, replaces docker from CLI
+  :ensure t
+  :commands docker
+  :bind ("C-c d" . docker))
+(use-package docker-tramp  ;; need this to edit container files
+  :defer t
+  :after docker)
+
 (use-package undo-tree
   :ensure t
   :diminish undo-tree-mode
@@ -228,13 +248,6 @@
   (load-theme 'zenburn t))
 (set-face-attribute 'default nil :height 200)
 
-(use-package diminish
-  :ensure t
-  :config
-  (diminish 'abbrev-mode)
-  (diminish 'flyspell-mode)
-  (diminish 'flyspell-prog-mode)
-  (diminish 'eldoc-mode))
 
 (use-package magit
   :ensure t
@@ -257,6 +270,7 @@
   (global-set-key (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1))
 
+;; todo, stop overlap with M-r cursor reposition
 (use-package smartparens
   :ensure t
   :config
@@ -289,10 +303,10 @@
 
 (set (make-local-variable 'whitespace-line-column) 80)
 (add-hook 'after-change-major-mode-hook
-          '(lambda () (when (eq major-mode 'go-mode)
+          #'(lambda () (when (eq major-mode 'go-mode)
                         (setq whitespace-line-column 120))))
 (add-hook 'after-change-major-mode-hook
-          '(lambda () (when (eq major-mode 'lsp-mode)
+          #'(lambda () (when (eq major-mode 'lsp-mode)
                         (setq whitespace-line-column 120))))
 
 (use-package whitespace
@@ -761,7 +775,7 @@
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ((clojure-mode go-mode) . lsp-deferred)
+         ((clojure-mode clojurec-mode go-mode) . lsp-deferred)
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :config
@@ -769,12 +783,26 @@
         lsp-enable-indentation nil
         lsp-enable-on-type-formatting nil
         lsp-modeline-code-actions-enable t)
+  (setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-minimum-prefix-length 1
+      lsp-lens-enable t
+      lsp-signature-auto-activate nil
+      ; lsp-enable-indentation nil ; uncomment to use cider indentation instead of lsp
+      ; lsp-enable-completion-at-point nil ; uncomment to use cider completion instead of lsp
+      )
   ;; for filling args placeholders upon function completion candidate selection
   ;; lsp-enable-snippet and company-lsp-enable-snippet should be nil with
   ;; yas-minor-mode is enabled: https://emacs.stackexchange.com/q/53104
   ;; (lsp-modeline-code-actions-mode)
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-  (add-to-list 'lsp-file-watch-ignored "\\.vscode\\'"))
+  (add-to-list 'lsp-file-watch-ignored "\\.vscode\\'")
+  (dolist (m '(clojure-mode
+               clojurec-mode
+               clojurescript-mode
+               clojurex-mode))
+    (add-to-list 'lsp-language-id-configuration `(,m . "clojure"))))
 
 ;; optionally
 (use-package lsp-ui
@@ -792,7 +820,7 @@
   :ensure t
   :config
   (setq nrepl-log-messages t)
-  (add-hook 'cider-repl-mode-hook #'paredit-mode)
+  ;; (add-hook 'cider-repl-mode-hook #'paredit-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
 
 ;; hide-show mode
