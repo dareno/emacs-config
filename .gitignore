@@ -8,3 +8,5 @@ projectile-bookmarks.eld
 savefile/
 transient/
 var/
+.cache/
+tramp
