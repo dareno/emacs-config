@@ -833,7 +833,27 @@
   (define-key hs-minor-mode-map (kbd "C-c h")
     (lookup-key hs-minor-mode-map (kbd "C-c @"))))
 
+;; RSS
+(use-package elfeed
+  :ensure t
+  :config
+  (setq elfeed-feeds
+        '(
+          "http://nullprogram.com/feed/"
+          "https://planet.emacslife.com/atom.xml"
+         "https://forum.prusaprinters.org/forum/hardware-firmware-and-software-help/?type=rss2&forum=384&topic=0"
+         "https://forum.prusaprinters.org/forum/general-discussion-announcements-and-releases/?type=rss2&forum=381&topic=0"
+         "http://rss.slashdot.org/Slashdot/slashdotMain"
+         ))
+  (setq-default elfeed-search-filter "@2-days-ago +unread")
+  (setq elfeed-search-title-max-width 100)
+  :bind
+  ("C-x w" . elfeed ))
 
+;; set latitude and longitude for noaa.el
+(setq calendar-latitude 39.9)
+(setq calendar-longitude -75.6)
+;;   https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&AheadHour=0&Submit=Submit&&FcstType=graphical&textField1=39.9065&textField2=-75.6008&site=all&menu=1
 
 ;;; general
 (server-start)  ;; enable "ec" from the command line
