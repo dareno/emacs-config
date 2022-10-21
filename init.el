@@ -775,7 +775,7 @@
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ((clojure-mode clojurec-mode go-mode) . lsp-deferred)
+         ((clojure-mode clojurec-mode go-mode js-mode) . lsp-deferred)
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :config
@@ -816,6 +816,22 @@
   :ensure t
   :after lsp)
 
+;; setup javascript/node.js environment
+;; install nvm (git clone)
+;; nvm install node
+;; npm -i -g typescript-language-server
+;; npm -i -g typescript
+;; M-x run-js
+(use-package js-comint
+  :ensure t
+  :config
+  (js-do-use-nvm)
+  (define-key js-mode-map [remap eval-last-sexp] #'js-comint-send-last-sexp)
+(define-key js-mode-map (kbd "C-c b") 'js-send-buffer)
+;;(with-eval-after-load 'js
+;;  (define-key js-mode-map (kbd "M-.") nil))
+)
+
 (use-package cider
   :ensure t
   :config
@@ -853,6 +869,7 @@
 ;; set latitude and longitude for noaa.el
 (setq calendar-latitude 39.9)
 (setq calendar-longitude -75.6)
+
 ;;   https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&AheadHour=0&Submit=Submit&&FcstType=graphical&textField1=39.9065&textField2=-75.6008&site=all&menu=1
 
 ;;; general
