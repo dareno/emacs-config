@@ -117,6 +117,10 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
+;; remove with emacs 29 which will fix a bug
+;; https://emacs.stackexchange.com/questions/74289/emacs-28-2-error-in-macos-ventura-image-type-invalid-image-type-svg
+(add-to-list 'image-types 'svg)
+
 (require 'use-package)
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
@@ -827,7 +831,10 @@
   :config
   (js-do-use-nvm)
   (define-key js-mode-map [remap eval-last-sexp] #'js-comint-send-last-sexp)
-(define-key js-mode-map (kbd "C-c b") 'js-send-buffer)
+  (define-key js-mode-map (kbd "C-c b") 'js-send-buffer)
+;;  (define-key js-mode-map (kbd "C-M-b") 'js-send-buffer-and-go)
+;;  (define-key js-mode-map (kbd "C-c b") 'js-send-buffer)
+
 ;;(with-eval-after-load 'js
 ;;  (define-key js-mode-map (kbd "M-.") nil))
 )
@@ -857,7 +864,7 @@
         '(
           "http://nullprogram.com/feed/"
           "https://planet.emacslife.com/atom.xml"
-         "https://forum.prusaprinters.org/forum/hardware-firmware-and-software-help/?type=rss2&forum=384&topic=0"
+          "https://fs.blog/feed" "https://forum.prusaprinters.org/forum/hardware-firmware-and-software-help/?type=rss2&forum=384&topic=0"
          "https://forum.prusaprinters.org/forum/general-discussion-announcements-and-releases/?type=rss2&forum=381&topic=0"
          "http://rss.slashdot.org/Slashdot/slashdotMain"
          ))
