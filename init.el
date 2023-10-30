@@ -245,7 +245,8 @@
   (progn
     (global-undo-tree-mode)
     (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)))
+    (setq undo-tree-visualizer-diff t)
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))))
 
 (use-package zenburn-theme
   :ensure t
@@ -651,7 +652,8 @@
   :ensure f
   :config
   (setq org-agenda-directory "~/Dropbox/org/")
-  (setq org-agenda-files '("~/Dropbox/org/" "~/Dropbox/org/habit/"))
+;;  (setq org-agenda-files '("~/Dropbox/org/" "~/Dropbox/org/habit/"))
+  (setq org-agenda-files '("~/Dropbox/org/" ))
   (setq dcreno/org-agenda-todo-view
         `("a" "Agenda"
           ((agenda ""
@@ -723,13 +725,13 @@
   :config (setq deft-directory "~/Dropbox/org"
                 deft-extensions '("org")))
 
-(use-package org-habit
-  :ensure nil
-  :after org
-  :config
-  (setq org-habit-show-all-today t
-        org-habit-preceding-days 7
-        org-habit-following-days 1))
+;; (use-package org-habit
+;;   :ensure nil
+;;   :after org
+;;   :config
+;;   (setq org-habit-show-all-today t
+;;         org-habit-preceding-days 7
+;;         org-habit-following-days 1))
 
 (use-package org-capture
   :ensure nil
