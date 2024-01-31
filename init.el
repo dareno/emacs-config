@@ -506,7 +506,7 @@
 (use-package embark
   :ensure t
 
-  :bind*
+  :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
    ("C-;" . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
